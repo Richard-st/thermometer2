@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+<head>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+  <title>Thermometer Setup</title>
+  <style type='text/css'>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      font-family: 'Helvetica', 'Arial', 'Helvetica';
+      width: 100%;
+    }
+
+    header {
+      background-color: black;
+      color: white;
+      font-size: 35px;
+      text-align: center;
+      padding: 5px;
+    }
+
+    section {}
+
+    .content-box {
+      height: 200px;
+      min-width: 400px;
+      width: 33%;
+      float: left;
+      border-color: black border-collapse: collapse;
+      border-style: solid;
+      border-width: 1px;
+    }
+
+    .box-title {
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      float: left;
+      text-align: center;
+      padding: 5px;
+      margin-top: 15px;
+      margin-bottom: 20px;
+    }
+
+    .box-line {
+      width: 100%;
+      float: left;
+      margin-bottom: 5px;
+    }
+
+    .box-text {
+      max-width: 150px;
+      min-width: 150px;
+      font-size: 14px;
+      float: left;
+      padding-right: 10px;
+      text-align: right;
+    }
+
+    .box-entry {
+      max-width: 50px;
+      min-width: 50px;
+      font-size: 14px;
+      float: left;
+    }
+
+    footer {
+      background-color: black;
+      color: white;
+      clear: both;
+      text-align: center;
+      padding: 5px;
+    }
+
+    @media screen and (max-width: 400px) {
+      .content-box {
+        background: white;
+        height: 180px;
+      }
+      .box-title {
+        margin-top: 5px;
+        margin-bottom: 10px;
+      }
+      header {
+        font-size: 25px;
+      }
+    }
+  </style>
+  <!--[if IE]> <script src='http://html5shim.googlecode.com/svn/trunk/html5.js'></script> <![endif]-->
+</head>
+
+<body>
+  <header> ESP8266 Setup </header>
+  <form method='post'>
+    <section>
+      <div class='content-box'>
+        <div class='box-title'> Wifi Configuration </div>
+        <div class='box-line'>
+          <div class='box-text'> Select Wifi Network </div>
+          <div class='box-entry'>~~ssidlist</div>
+        </div>
+        <div class='box-line'>
+          <div class='box-text'> Password </div>
+          <div class='box-entry'><input type='text' name='password' value='~~password'></div>
+        </div>
+      </div>
+      <div class='content-box'>
+        <div class='box-title'> Enter MQTT Server </div>
+        <div class='box-line'>
+          <div class='box-text'> Server </div>
+          <div class='box-entry'><input type='text' name='mqtt-server' value='~~mqtt-server'></div>
+        </div>
+        <div class='box-line'>
+          <div class='box-text'> Port </div>
+          <div class='box-entry'><input type='text' name='mqtt-port' value='~~mqtt-port'><br></div>
+        </div>
+        <div class='box-line'>
+          <div class='box-text'> Sleep Time </div>
+          <div class='box-entry'><input type='text' name='sleep-time' value='~~sleep-time'><br></div>
+        </div>
+      </div>
+      <div class='content-box'>
+        <div class='box-title'> Control Settings </div>
+        <div class='box-line'>
+          <div class='box-text'> Max Wifi Attempts </div>
+          <div class='box-entry'><input type='text' name='Max-Wifi' value='~~Max-Wifi'></div>
+        </div>
+        <div class='box-line'>
+          <div class='box-text'> Max MQTT Attempts </div>
+          <div class='box-entry'><input type='text' name='Max-MQTT' value='~~Max-MQTT'></div>
+        </div>
+        <div class='box-line'>
+          <div class='box-text'> Debug Led </div>
+          <div class='box-entry'><input type='radio' name='debug-led' value='debug-on' ~~parm-debug-on> On <input type='radio' name='debug-led' value='debug-off' ~~parm-debug-off> Off </div>
+        </div>
+      </div>
+      <!-- <input type='hidden' name='submitted' value='yes'> -->
+      <!-- <br><input type='submit' value='Save Changes and Restart'> --></section>
+    <footer><button type='submit' name='formAction' value='save'> Save </button><button type='submit' name='formAction' value='exit'> Exit </button></footer>
+  </form>
+</body>
+
+</html>
