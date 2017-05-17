@@ -281,7 +281,7 @@ void handleRoot() {
               _myEEPROM.setPort            (server.arg("mqtt-port").toInt() );
               _myEEPROM.setMaxWifiAttempts (server.arg("Max-Wifi").toInt() );
               _myEEPROM.setMaxMqttAttempts (server.arg("Max-MQTT").toInt() );
-              _myEEPROM.setSleepTime       (server.arg("Sleep-Time").toInt() );
+              _myEEPROM.setSleepTime       (server.arg("sleep-time").toInt() );
               if ( String(server.arg("debug-led")) == String("debug-on") )
                  _myEEPROM.setDebug        (true);
               else
@@ -296,7 +296,7 @@ void handleRoot() {
               _myEEPROM.setPort            (server.arg("mqtt-port").toInt() );
               _myEEPROM.setMaxWifiAttempts (server.arg("Max-Wifi").toInt() );
               _myEEPROM.setMaxMqttAttempts (server.arg("Max-MQTT").toInt() );
-              _myEEPROM.setSleepTime       (server.arg("Sleep-Time").toInt() );
+              _myEEPROM.setSleepTime       (server.arg("sleep-time").toInt() );
               _myEEPROM.setDebug           (server.arg("debug-led").toInt() );
               _myEEPROM.burn();
               DEBUG_PRINTLN("Exit Pressed");
@@ -321,7 +321,7 @@ void handleRoot() {
   sPageHtmlWorking.replace("~~mqtt-port"   ,String(_myEEPROM.getPort())  );
   sPageHtmlWorking.replace("~~Max-Wifi"    ,String(_myEEPROM.getMaxWifiAttempts()) );
   sPageHtmlWorking.replace("~~Max-MQTT"    ,String(_myEEPROM.getMaxMqttAttempts()) );
-  sPageHtmlWorking.replace("~~Sleep-Time"  ,String(_myEEPROM.getSleepTime()) );
+  sPageHtmlWorking.replace("~~sleep-time"  ,String(_myEEPROM.getSleepTime()) );
   if (_myEEPROM.getDebug() == true){
         sPageHtmlWorking.replace("~~parm-debug-on","checked");
         sPageHtmlWorking.replace("~~parm-debug-off","");
@@ -434,9 +434,31 @@ void handleRoot() {
     //
     // Sleep
     //
+    int i70Mins   = 4200; // 70 minutes
+    int iSleepTime = _myEEPROM.getWorkingSleepTime();
+    unsigned int iSleepTimeMIS;
+
+    if (iSleepTime > i70Mins){
+      //over 70 mins. will overflow so put back to 70 mins
+      iSleepTime    = iSleepTime - i70Mins;
+      iSleepTimeMIS = i70Mins * 1000000;
+      _myEEPROM.setWorkingSleepTime(iSleepTime);
+    }else
+    {
+      //under 70 mins. will not overflow
+      iSleepTimeMIS = iSleepTime * 1000000;
+      _myEEPROM.setWorkingSleepTime(_myEEPROM.getSleepTime() );
+    }
+
+    _myEEPROM.burn();
+    DEBUG_PRINT("sleeping for ");
+    DEBUG_PRINT(iSleepTimeMIS);
+    DEBUG_PRINTLN(" microseconds");
+    DEBUG_PRINT("renamining sleep time ");
+    DEBUG_PRINTLN(iSleepTime);
     DEBUG_PRINTLN("going to sleep");
     debug_flash(DEBUG_FLASH_SLEEP);
-    ESP.deepSleep(5000000, WAKE_RF_DEFAULT); // Sleep for 60 seconds
+    ESP.deepSleep(iSleepTimeMIS, WAKE_RF_DEFAULT); // Sleep for 60 seconds
  }
 
 //-------------------------------------------

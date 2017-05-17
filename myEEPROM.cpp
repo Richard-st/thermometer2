@@ -86,10 +86,22 @@ bool  myEEPROM::getDebug(){
 //--------------------------------------------------
 
 void    myEEPROM::setSleepTime(int iSleepTime){
-  _controlFromEEPROM.iSleepTime = iSleepTime;}
+  _controlFromEEPROM.iSleepTime = iSleepTime;
+  _controlFromEEPROM.iWorkingSleepTime = iSleepTime;}
 
 int     myEEPROM::getSleepTime(){
   return _controlFromEEPROM.iSleepTime;}
+
+//--------------------------------------------------
+// sleep Time
+//--------------------------------------------------
+
+void    myEEPROM::setWorkingSleepTime(int iWorkingSleepTime){
+  _controlFromEEPROM.iWorkingSleepTime = iWorkingSleepTime;}
+
+int     myEEPROM::getWorkingSleepTime(){
+  return _controlFromEEPROM.iWorkingSleepTime;}
+
 
 
 //-------------------------------
@@ -158,6 +170,8 @@ void myEEPROM::debug(String sTitle)
    Serial.println(String(_mqttFromEEPROM.iPort) );
    Serial.print  (String ("== iSleepTime       - ")) ;
    Serial.println(String(_controlFromEEPROM.iSleepTime) );
+   Serial.print  (String ("== iWorkingSleepTime       - ")) ;
+   Serial.println(String(_controlFromEEPROM.iWorkingSleepTime) );
    Serial.print  (String ("== iMaxWifiAttempts - ")) ;
    Serial.println(String(_controlFromEEPROM.iMaxWifiAttempts) );
    Serial.print  (String ("== iMaxMqttAttempts - ")) ;

@@ -36,6 +36,9 @@ class myEEPROM
     void   setSleepTime(int iSleepTime);
     int    getSleepTime();
 
+    void   setWorkingSleepTime(int iWorkingSleepTime);
+    int    getWorkingSleepTime();
+
     void   setThermoSampleTime(int iThermoSampleTime);
     int    getThermoSampleTime();
     int    getThermoSampleTimeMS();
@@ -82,6 +85,7 @@ class myEEPROM
       int    iMaxMqttAttempts;
       bool   bDebug;
       int    iSleepTime;
+      int    iWorkingSleepTime;
     } _controlFromEEPROM;
 
 
