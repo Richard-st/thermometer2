@@ -148,6 +148,7 @@ int checkSetupMode(){
 //-------------------------------------------
 void mqtt_connect() {
 
+  char mqtt_server[50];
 
 
   iMQTTConnectAttempts = 1;
@@ -157,10 +158,11 @@ void mqtt_connect() {
   DEBUG_PRINT(_myEEPROM.getPort());
   DEBUG_PRINTLN("] ");
   //client.setServer(_myEEPROM.getServer().c_str(),_myEEPROM.getPort());
-  client.setServer("spa",1883);
+  strcpy(mqtt_server ,_myEEPROM.getServer().c_str() );
+  client.setServer(mqtt_server,_myEEPROM.getPort());
 
   // Loop until we're reconnected
-    while (!client.connected() && iMQTTConnectAttempts < 10) {
+    while (!client.connected() && iMQTTConnectAttempts < _myEEPROM.getMaxMqttAttempts()) {
       //debug_flash(DEBUG_FLASH_MQTT_CONNECT);
 
 
@@ -172,14 +174,17 @@ void mqtt_connect() {
     } else {
       DEBUG_PRINT("failed, rc=");
       DEBUG_PRINT(client.state());
-      DEBUG_PRINTLN(" try again in a few seconds");
+      DEBUG_PRINTLN(" try again one seconds");
       // Wait 1 seconds before retrying
       iMQTTConnectAttempts++;
       delay(1000);
     }
   }
 
-  client.publish("CA",String(iMQTTConnectAttempts).c_str() );
+  if (!client.connected()){
+      DEBUG_PRINTLN(" Failed to establish MQTT connection");
+  }
+
 }
 
 
@@ -189,13 +194,13 @@ void mqtt_connect() {
 // Connect to WIFI
 //-------------------------------------------
 void wifi_connect() {
-
+  int iWIFIConnectAttempts = 0;
   DEBUG_PRINTLN("Connecting to wifi");
 
 
 
   WiFi.begin( _myEEPROM.getSSID().c_str(), _myEEPROM.getPassword().c_str());
-  while (WiFi.status() != WL_CONNECTED) {
+  while (WiFi.status() != WL_CONNECTED &&  iWIFIConnectAttempts++ < _myEEPROM.getMaxWifiAttempts()) {
     debug_flash(DEBUG_FLASH_WIFI_CONNECT);
     delay(100);
     DEBUG_PRINT(".");
@@ -361,7 +366,7 @@ void handleRoot() {
       wifi_connect();
     }
 
-    ArduinoOTA.setHostname("Thermometer [test]");
+    ArduinoOTA.setHostname("Thermometer");
     ArduinoOTA.setPassword("123");
 
     ArduinoOTA.onStart([]() {
@@ -420,15 +425,17 @@ void handleRoot() {
     //
     // Publish Temp to MQTT broket
     //
-    sTemp = String(temp,2);
-    sTemp.toCharArray(cTemp,10);
-    DEBUG_PRINT("Publishing Message Topic:[");
-    DEBUG_PRINT( MQTT_TOPIC );
-    DEBUG_PRINT("] Payload:[");
-    DEBUG_PRINT(cTemp);
-    DEBUG_PRINTLN("]");
-    client.publish(MQTT_TOPIC,cTemp );
-    delay(10);
+    if (client.connected()){
+      sTemp = String(temp,2);
+      sTemp.toCharArray(cTemp,10);
+      DEBUG_PRINT("Publishing Message Topic:[");
+      DEBUG_PRINT( MQTT_TOPIC );
+      DEBUG_PRINT("] Payload:[");
+      DEBUG_PRINT(cTemp);
+      DEBUG_PRINTLN("]");
+      client.publish(MQTT_TOPIC,cTemp );
+      delay(10);
+    }
 
 
     //
@@ -443,6 +450,7 @@ void handleRoot() {
       iSleepTime    = iSleepTime - i70Mins;
       iSleepTimeMIS = i70Mins * 1000000;
       _myEEPROM.setWorkingSleepTime(iSleepTime);
+      _myEEPROM.burn();
     }else
     {
       //under 70 mins. will not overflow
@@ -450,7 +458,7 @@ void handleRoot() {
       _myEEPROM.setWorkingSleepTime(_myEEPROM.getSleepTime() );
     }
 
-    _myEEPROM.burn();
+
     DEBUG_PRINT("sleeping for ");
     DEBUG_PRINT(iSleepTimeMIS);
     DEBUG_PRINTLN(" microseconds");
